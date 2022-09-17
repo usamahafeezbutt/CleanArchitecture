@@ -1,23 +1,138 @@
 ﻿
 
 using CleanArchitecture.Application.Common.Interfaces.DatabaseContext;
+using CleanArchitecture.Application.Common.Interfaces.Services;
+using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Entities;
+using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int> ,IdentityUserToken<int>>, IApplicationDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
+        private readonly ICurrentUserService _currentUserService;
 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService) : base(options)
+        {
+            _currentUserService = currentUserService;
         }
 
-        Task<bool> IApplicationDbContext.SaveChangesAsync(CancellationToken cancellationToken)
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            throw new NotImplementedException();
+            foreach (var entry in ChangeTracker.Entries().ToList())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        SetCreationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        break;
+
+                    case EntityState.Modified:
+                        SetModificationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        break;
+
+                    case EntityState.Deleted:
+                        CancelDeletionForSoftDelete(entry);
+                        SetModificationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        break;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void CancelDeletionForSoftDelete(EntityEntry entry)
+        {
+            if (entry.Entity is not ISoftDelete)
+            {
+                return;
+            }
+
+            entry.Reload();
+            entry.State = EntityState.Modified;
+            entry.Entity.As<ISoftDelete>().IsDeleted = true;
+        }
+
+        private void SetModificationAuditProperties(object entity, string userId)
+        {
+            if (entity is not IModificationAudit)
+            {
+                //Object does not implement ICreationAudited
+                return;
+            }
+            var entityWithModifiedAudit = entity as IModificationAudit;
+
+            if (entityWithModifiedAudit == null)
+            {
+                return;
+            }
+
+            SetModifiedAuditProperty(entityWithModifiedAudit);
+
+            SetModifiedByAuditProperty(userId, entityWithModifiedAudit);
+        }
+
+        private static void SetCreationAuditProperties(object entity, string userId)
+        {
+            if (entity is not ICreationAudit)
+            {
+                //Object does not implement ICreationAudited
+                return;
+            }
+            var entityWithCreateAudit = entity as ICreationAudit;
+
+            if (entityWithCreateAudit is null)
+            {
+                return;
+            }
+
+            SetCreatedAuditProperty(entityWithCreateAudit);
+
+            SetCreatedByAuditProperty(userId, entityWithCreateAudit);
+        }
+
+        private static void SetCreatedAuditProperty(ICreationAudit? entityWithCreateAudit)
+        {
+            if (entityWithCreateAudit!.Created == default(DateTime))
+            {
+                entityWithCreateAudit.Created = DateTime.Now;
+            }
+        }
+
+        private static void SetCreatedByAuditProperty(string userId, ICreationAudit? entityWithCreateAudit)
+        {
+            if (string.IsNullOrWhiteSpace(userId) && entityWithCreateAudit!.CreatedBy != null)
+            {
+                //Unknown user or Id already set in database table
+                return;
+            }
+
+            //Finally, set CreatorUserId!
+            entityWithCreateAudit!.CreatedBy = userId;
+        }
+
+        private static void SetModifiedAuditProperty(IModificationAudit? entityWithModifiedAudit)
+        {
+            if (entityWithModifiedAudit!.LastModified == default(DateTime))
+            {
+                entityWithModifiedAudit.LastModified = DateTime.Now;
+            }
+        }
+
+        private static void SetModifiedByAuditProperty(string userId, IModificationAudit? entityWithModifiedAudit)
+        {
+            if (string.IsNullOrWhiteSpace(userId) && entityWithModifiedAudit!.LastModifiedBy != null)
+            {
+                //Unknown user or Id already set in database table
+                return;
+            }
+
+            //Finally, set CreatorUserId!
+            entityWithModifiedAudit!.LastModifiedBy = userId;
         }
     }
 }

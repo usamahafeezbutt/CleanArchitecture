@@ -2,7 +2,6 @@
 using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Principal;
 
 namespace CleanArchitecture.Domain.Entities
 {
@@ -17,5 +16,7 @@ namespace CleanArchitecture.Domain.Entities
         public string? LastModifiedBy { get; set; }
         public DateTime Created { get; set; }
         public string? CreatedBy { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }
