@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection;
 
 namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 {
@@ -133,6 +134,13 @@ namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 
             //Finally, set CreatorUserId!
             entityWithModifiedAudit!.LastModifiedBy = userId;
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            base.OnModelCreating(builder);
         }
     }
 }
