@@ -1,6 +1,7 @@
 ﻿
 
 using CleanArchitecture.Application.Common.Interfaces.DatabaseContext;
+using CleanArchitecture.Application.Common.Interfaces.Identity;
 using CleanArchitecture.Application.Common.Interfaces.Services;
 using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Entities;
@@ -13,7 +14,7 @@ using System.Reflection;
 
 namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int, IdentityUserClaim<int>, IdentityUserRole<int>, IdentityUserLogin<int>, IdentityRoleClaim<int> ,IdentityUserToken<int>>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
     {
         private readonly ICurrentUserService _currentUserService;
 

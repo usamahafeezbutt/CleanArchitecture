@@ -4,10 +4,9 @@ namespace CleanArchitecture.Application.Common.Interfaces.Services
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<CustomerDto>> GetCustomers();
-        Task<CustomerDto> GetCustomer(Guid customerId);
-        Task<Guid> AddCustomer(CustomerDto customer);
-        Task<bool> UpdateCustomer(CustomerDto customer);
+        Task<IEnumerable<CustomerCreateDto>> GetCustomers();
+        Task<CustomerCreateDto> GetCustomer(Guid customerId);
+        Task<bool> UpdateCustomer(CustomerCreateDto customer);
         Task<bool> RemoveCustomer(Guid customerId);
     }
 }

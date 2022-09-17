@@ -5,17 +5,17 @@ namespace CleanArchitecture.Application.Services.Customer
 {
     public class CustomerService : ICustomerService
     {
-        public Task<Guid> AddCustomer(CustomerDto customer)
+        public Task<Guid> AddCustomer(CustomerCreateDto customer)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CustomerDto> GetCustomer(Guid customerId)
+        public Task<CustomerCreateDto> GetCustomer(Guid customerId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CustomerDto>> GetCustomers()
+        public Task<IEnumerable<CustomerCreateDto>> GetCustomers()
         {
             throw new NotImplementedException();
         }
@@ -25,7 +25,7 @@ namespace CleanArchitecture.Application.Services.Customer
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateCustomer(CustomerDto customer)
+        public Task<bool> UpdateCustomer(CustomerCreateDto customer)
         {
             throw new NotImplementedException();
         }

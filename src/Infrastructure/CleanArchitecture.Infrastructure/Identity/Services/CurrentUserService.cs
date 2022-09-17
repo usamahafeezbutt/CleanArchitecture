@@ -1,7 +1,9 @@
-﻿using CleanArchitecture.Application.Common.Interfaces.Services;
+﻿using CleanArchitecture.Application.Common.Interfaces.Identity;
+using Microsoft.AspNetCore.Http;
+using System.Data.Common;
 using System.Security.Claims;
 
-namespace CleanArchitecture.WebApi.Serivces
+namespace CleanArchitecture.Infrastructure.Identity.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
@@ -11,6 +13,6 @@ namespace CleanArchitecture.WebApi.Serivces
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        public string UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
 }

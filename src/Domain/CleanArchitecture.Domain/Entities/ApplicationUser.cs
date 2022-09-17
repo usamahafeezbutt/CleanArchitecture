@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<int>, ICreationAudit, IModificationAudit, ISoftDelete
+    public class ApplicationUser : IdentityUser, ICreationAudit, IModificationAudit, ISoftDelete
     {
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string Phone { get; set; } = null!;
         public string ImageUrl { get; set; } = null!;
         public Subscription Subscription { get; set; }
         public DateTime? LastModified { get; set; }

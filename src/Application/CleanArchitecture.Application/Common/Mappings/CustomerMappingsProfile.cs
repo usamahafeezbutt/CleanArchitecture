@@ -8,7 +8,7 @@ namespace CleanArchitecture.Application.Common.Mappings
     {
         public CustomerMappingsProfile()
         {
-             CreateMap<CustomerDto, ApplicationUser>().ReverseMap();
+             CreateMap<CustomerCreateDto, ApplicationUser>().ReverseMap();
         }
     }
 }
