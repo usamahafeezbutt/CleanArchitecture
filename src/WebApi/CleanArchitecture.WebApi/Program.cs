@@ -6,24 +6,28 @@ using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
 using CleanArchitecture.Infrastructure.Persistence.DatabaseContext;
 using CleanArchitecture.Infrastructure.Persistence.DataSeedings;
+using CleanArchitecture.WebApi.Filters;
+using CleanArchitecture.WebApi.Middlewares;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ExceptionFilter>()
+});
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddFileServices();
 builder.Services.AddEmailServices(builder.Configuration);
-
 builder.Host.UseSerilog((context, configurations) => configurations.ReadFrom.Configuration(context.Configuration));
 var app = builder.Build();
 
@@ -36,6 +40,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<PerformanceMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
