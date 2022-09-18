@@ -20,7 +20,6 @@ namespace CleanArchitecture.WebApi.Middlewares
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 await _next(httpContext);
                 stopwatch.Stop();
-                //var currentUserService = httpContext.RequestServices.GetService<ICurrentUserService>();
                 if (stopwatch.ElapsedMilliseconds > 500)
                 {
                     _logger.LogInformation($"Long Running Reqest taken almost {stopwatch.Elapsed.TotalSeconds} seconds"
