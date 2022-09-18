@@ -2,6 +2,8 @@
 using CleanArchitecture.Application.Common.Models.Identity;
 using CleanArchitecture.Application.Services.Account.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Security.Certificates;
+using System.Net;
 
 namespace CleanArchitecture.WebApi.Controllers
 {
@@ -24,16 +26,17 @@ namespace CleanArchitecture.WebApi.Controllers
         }
 
         [HttpPost(nameof(Authenticate))]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<ActionResult<AuthResponse>> Authenticate([FromBody] AuthRequestDto request)
         {
             var result = await _accountService.AuthenticateAsync(request);
-            return Ok(result);
+            return result is not null ? Unauthorized() : Ok(result);
         }
 
         [HttpPost(nameof(ChangePassword))]
-        public async Task<ActionResult<AuthResponse>> ChangePassword([FromBody] AuthRequestDto request)
+        public async Task<ActionResult<AuthResponse>> ChangePassword([FromBody] ChangePasswordDto request)
         {
-            var result = await _accountService.AuthenticateAsync(request);
+            var result = await _accountService.ChangePassword(request);
             return Ok(result);
         }
 

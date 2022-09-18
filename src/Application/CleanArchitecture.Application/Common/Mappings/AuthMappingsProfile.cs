@@ -10,7 +10,12 @@ namespace CleanArchitecture.Application.Common.Mappings
     {
         public AuthMappingsProfile()
         {
-            CreateMap<RegistrationRequestDto, ApplicationUser>();
+            CreateMap<RegistrationRequestDto, ApplicationUser>()
+                .ForMember(destinationMember => destinationMember.UserName, memberOptions => memberOptions.MapFrom(sourceMember => GetUsername(sourceMember)));
         }
+
+        private static string GetUsername(RegistrationRequestDto sourceMember)
+        => sourceMember.Email.Split("@").First();
+        
     }
 }

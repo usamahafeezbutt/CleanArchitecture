@@ -18,8 +18,16 @@ namespace CleanArchitecture.Infrastructure.Persistence.DataSeedings
             ApplicationUser admin = InitializeAdmin();
             if (userManager.Users.All(user => user.UserName != admin.UserName))
             {
-                await userManager.CreateAsync(admin, "12345678");
-                await userManager.AddToRolesAsync(admin, new[] { adminRole.Name });
+                try
+                {
+                    await userManager.CreateAsync(admin, "12345678");
+                    await userManager.AddToRolesAsync(admin, new[] { adminRole.Name });
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
             }
         }
 
@@ -29,7 +37,8 @@ namespace CleanArchitecture.Infrastructure.Persistence.DataSeedings
             Name = "Usama Hafeez Butt",
             Email = "usamahafeezbutt@gmail.com",
             UserName = "usamahafeezbutt@gmail.com",
-            PhoneNumber = "03497876156"
+            PhoneNumber = "03497876156",
+            CreatedBy = Guid.NewGuid().ToString()
         };
     }
 }

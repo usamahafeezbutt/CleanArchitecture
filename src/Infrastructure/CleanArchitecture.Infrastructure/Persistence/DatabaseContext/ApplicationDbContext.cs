@@ -30,16 +30,16 @@ namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        SetCreationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        SetCreationAuditProperties(entry.Entity);
                         break;
 
                     case EntityState.Modified:
-                        SetModificationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        SetModificationAuditProperties(entry.Entity);
                         break;
 
                     case EntityState.Deleted:
                         CancelDeletionForSoftDelete(entry);
-                        SetModificationAuditProperties(entry.Entity, _currentUserService.UserId!.ToString());
+                        SetModificationAuditProperties(entry.Entity);
                         break;
                 }
             }
@@ -59,7 +59,7 @@ namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
             entry.Entity.As<ISoftDelete>().IsDeleted = true;
         }
 
-        private void SetModificationAuditProperties(object entity, string userId)
+        private void SetModificationAuditProperties(object entity)
         {
             if (entity is not IModificationAudit)
             {
@@ -75,10 +75,10 @@ namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 
             SetModifiedAuditProperty(entityWithModifiedAudit);
 
-            SetModifiedByAuditProperty(userId, entityWithModifiedAudit);
+            SetModifiedByAuditProperty(_currentUserService.UserId, entityWithModifiedAudit);
         }
 
-        private static void SetCreationAuditProperties(object entity, string userId)
+        private void SetCreationAuditProperties(object entity)
         {
             if (entity is not ICreationAudit)
             {
@@ -94,7 +94,7 @@ namespace CleanArchitecture.Infrastructure.Persistence.DatabaseContext
 
             SetCreatedAuditProperty(entityWithCreateAudit);
 
-            SetCreatedByAuditProperty(userId, entityWithCreateAudit);
+            SetCreatedByAuditProperty(_currentUserService.UserId, entityWithCreateAudit);
         }
 
         private static void SetCreatedAuditProperty(ICreationAudit? entityWithCreateAudit)

@@ -1,5 +1,6 @@
 ﻿
 
+using CleanArchitecture.Application.Common.Configurations.Settings.Emails;
 using CleanArchitecture.Application.Common.Interfaces.Identity;
 using CleanArchitecture.Infrastructure.Identity.Models;
 using CleanArchitecture.Infrastructure.Identity.Services;
@@ -18,6 +19,7 @@ namespace CleanArchitecture.Infrastructure.Identity
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.Configure<JwtSettings>(configurations.GetSection(nameof(JwtSettings)));
             services.InitializeJwtTokenParameters(configurations);
             return services;
         }
