@@ -20,13 +20,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<ExceptionFilter>()
+    options.Filters.Add<ExceptionFilter>();
 });
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddFileServices();
+builder.Services.AddHealthChecks()
+            .AddDbContextCheck<ApplicationDbContext>();
 builder.Services.AddEmailServices(builder.Configuration);
 builder.Host.UseSerilog((context, configurations) => configurations.ReadFrom.Configuration(context.Configuration));
 var app = builder.Build();
@@ -44,6 +46,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<PerformanceMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHealthChecks("/health");
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
