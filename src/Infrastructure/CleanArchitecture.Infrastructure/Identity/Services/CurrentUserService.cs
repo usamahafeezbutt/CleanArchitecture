@@ -12,7 +12,7 @@ namespace CleanArchitecture.Infrastructure.Identity.Services
         {
             _httpContextAccessor = httpContextAccessor;
         }
-
-        public string UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        private string Identifier => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        public string UserId => !string.IsNullOrWhiteSpace(Identifier) ? Identifier : "";
     }
 }
