@@ -2,11 +2,9 @@
 
 using CleanArchitecture.Application.Common.Interfaces.DatabaseContext;
 using CleanArchitecture.Application.Common.Interfaces.Identity;
-using CleanArchitecture.Application.Common.Interfaces.Services;
 using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Entities;
 using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
