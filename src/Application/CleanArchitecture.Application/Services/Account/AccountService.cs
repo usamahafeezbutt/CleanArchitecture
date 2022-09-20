@@ -4,6 +4,7 @@ using AutoMapper;
 using CleanArchitecture.Application.Common.Interfaces.Identity;
 using CleanArchitecture.Application.Common.Interfaces.Services;
 using CleanArchitecture.Application.Common.Models.Identity;
+using CleanArchitecture.Application.Common.Models.Response;
 using CleanArchitecture.Application.Services.Account.Dto;
 using CleanArchitecture.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ namespace CleanArchitecture.Application.Services.Account
             _mapper = mapper;
         }
 
-        public async Task<AuthResponse> AuthenticateAsync(AuthRequestDto request)
+        public async Task<Response<AuthResponse>> AuthenticateAsync(AuthRequestDto request)
         {
             var user = await _identityService.FindByEmailAsync(request.Email);
             if (user == null)
@@ -41,29 +42,32 @@ namespace CleanArchitecture.Application.Services.Account
             return  _tokenService.GenerateUserToken(user);
         }
 
-        public async Task<bool> ChangePassword(ChangePasswordDto changePasswordDto)
+        public async Task<BaseResponse> ChangePassword(ChangePasswordDto changePasswordDto)
         {
             var user = await _identityService.FindByIdAsync(_currentUserService.UserId.ToString());
             if (user == null)
             {
                 _logger.LogError("No user found");
-                return false;
+                return new BaseResponse { Success = false, Message = "No user found"};
             }
             if (!string.Equals(changePasswordDto.NewPassword, changePasswordDto.ConfirmPassword))
-                return false;
+                return new BaseResponse { Success = false, Message = "New and confirm password failed to match" };
+
+            if (await _identityService.CheckPasswordAsync(user, changePasswordDto.Password))
+                return new BaseResponse { Success = false, Message = "Email or password is incorrect" };
 
             var result = await _identityService.ChangePasswordAsync(user, changePasswordDto.Password, changePasswordDto.NewPassword);
 
             if (!result.Succeeded)
             {
                 _logger.LogError($"{_currentUserService.UserId} tried to change the passwort but failed");
-                return false!;
+                return new BaseResponse { Success = false, Message = "No user found" };
             }
 
-            return true;
+            return new BaseResponse { Success = false, Message = "No user found" };
         }
 
-        public async Task<AuthResponse> RegisterAsync(RegistrationRequestDto request)
+        public async Task<Response<AuthResponse>> RegisterAsync(RegistrationRequestDto request)
         {
             var user = _mapper.Map<ApplicationUser>(request);
             var result = await _identityService.CreateUserAsync(user, request.Password);

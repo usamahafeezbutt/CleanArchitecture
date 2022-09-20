@@ -2,6 +2,7 @@
 
 using CleanArchitecture.Application.Common.Interfaces.Identity;
 using CleanArchitecture.Application.Common.Models.Identity;
+using CleanArchitecture.Application.Common.Models.Response;
 using CleanArchitecture.Domain.Entities;
 using CleanArchitecture.Infrastructure.Identity.Models;
 using Microsoft.Extensions.Options;
@@ -19,12 +20,17 @@ namespace CleanArchitecture.Infrastructure.Identity.Services
         {
             _jwtSettings = jwtSettings.Value;
         }
-        public AuthResponse GenerateUserToken(ApplicationUser user)
+        public Response<AuthResponse> GenerateUserToken(ApplicationUser user)
         =>  new()
             {
-                Token = PrepareAuthToken(user),
-                Email = user.Email,
-                Expiry = _jwtSettings.Expiry
+                Success = true,
+                Message = "Token Generated Successfull",
+                Result = new AuthResponse
+                {
+                    Token = PrepareAuthToken(user),
+                    Email = user.Email,
+                    Expiry = _jwtSettings.Expiry
+                }
             };
 
         private string PrepareAuthToken(ApplicationUser user)

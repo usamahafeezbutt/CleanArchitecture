@@ -2,7 +2,7 @@
 
 namespace CleanArchitecture.Infrastructure.Tests.Identity
 {
-    public class IdentityService
+    public class IdentityServiceTests
     {
     }
 }

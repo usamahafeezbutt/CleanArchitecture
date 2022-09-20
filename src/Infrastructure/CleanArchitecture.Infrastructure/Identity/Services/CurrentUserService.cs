@@ -1,6 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces.Identity;
 using Microsoft.AspNetCore.Http;
-using System.Data.Common;
 using System.Security.Claims;
 
 namespace CleanArchitecture.Infrastructure.Identity.Services
