@@ -55,7 +55,7 @@ namespace CleanArchitecture.Application.Tests.Services
             _mapper.Setup(mapper => mapper.Map<ApplicationUser>(It.IsAny<RegistrationRequestDto>())).Returns(user);    
             _identityService.Setup(identityService => identityService.CreateUserAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
             _identityService.Setup(identityService => identityService.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
-            _tokenService.Setup(tokenService => tokenService.GenerateUserToken(It.IsAny<ApplicationUser>())).Returns(authResponse);
+            _tokenService.Setup(tokenService => tokenService.GenerateUserToken(It.IsAny<ApplicationUser>())).ReturnsAsync(authResponse);
             //Act
             var result = await _accountService.RegisterAsync(registrationRequestDto);
             //Assert
@@ -99,7 +99,7 @@ namespace CleanArchitecture.Application.Tests.Services
             };
             _identityService.Setup(identityService => identityService.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
             _identityService.Setup(identityService => identityService.CheckPasswordAsync(It.IsAny<ApplicationUser>(),It.IsAny<string>())).ReturnsAsync(true);
-            _tokenService.Setup(tokenService => tokenService.GenerateUserToken(It.IsAny<ApplicationUser>())).Returns(authResponse);
+            _tokenService.Setup(tokenService => tokenService.GenerateUserToken(It.IsAny<ApplicationUser>())).ReturnsAsync(authResponse);
             //Act
             var result = await _accountService.AuthenticateAsync(authRequestDto);
             //Assert

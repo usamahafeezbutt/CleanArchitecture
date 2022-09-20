@@ -7,6 +7,6 @@ namespace CleanArchitecture.Application.Common.Interfaces.Identity
 {
     public interface ITokenService
     {
-        public Response<AuthResponse> GenerateUserToken(ApplicationUser user);
+        public Task<Response<AuthResponse>> GenerateUserToken(ApplicationUser user);
     }
 }

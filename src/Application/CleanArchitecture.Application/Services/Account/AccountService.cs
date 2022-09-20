@@ -39,7 +39,7 @@ namespace CleanArchitecture.Application.Services.Account
             var passwordCheck = await _identityService.CheckPasswordAsync(user, request.Password);
             if (!passwordCheck)
                 return null!;
-            return  _tokenService.GenerateUserToken(user);
+            return await _tokenService.GenerateUserToken(user);
         }
 
         public async Task<BaseResponse> ChangePassword(ChangePasswordDto changePasswordDto)
@@ -77,7 +77,7 @@ namespace CleanArchitecture.Application.Services.Account
                 return null!;
             }
             var identityUser = await _identityService.FindByEmailAsync(request.Email);
-            return _tokenService.GenerateUserToken(identityUser);
+            return await _tokenService.GenerateUserToken(identityUser);
         }
     }
 }

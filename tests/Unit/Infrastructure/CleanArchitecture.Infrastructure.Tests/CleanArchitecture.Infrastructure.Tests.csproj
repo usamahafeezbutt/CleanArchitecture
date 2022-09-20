@@ -26,4 +26,8 @@
     <Folder Include="Persistence\Repositories\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Infrastructure\CleanArchitecture.Infrastructure\CleanArchitecture.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
